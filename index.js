@@ -1,16 +1,28 @@
 import express from 'express'
-import pool from './db.js'  // your postgres pool setup
+import cors from 'cors'
+import applicationRouter from './routes/application.js'
+import documentsRouter from './routes/documents.js'
+import personsRouter from './routes/persons.js'
+import rolesRouter from './routes/roles.js'
+import companiesRouter from './routes/companies.js'
+import addressRouter from './routes/address.js'
 
-const index = express()
+const app = express()
 const PORT = 3000
 
-index.use(express.json())  // to parse JSON bodies
+app.use(cors({
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}))
+app.use(express.json())
 
-// Simple test route to check server is running
-index.get('/', (req, res) => {
-    res.send('Plant Database API is running')
-})
-
-index.listen(PORT, () => {
-    console.log(`Server started on http://localhost:${PORT}`)
-})
+app.use('/application', applicationRouter)
+app.use('/documents', documentsRouter)
+app.use('/persons', personsRouter)
+app.use('/roles', rolesRouter)
+app.use('/companies', companiesRouter)
+app.use('/address', addressRouter)
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+});
